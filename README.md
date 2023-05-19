@@ -35,9 +35,12 @@ Then a "dti-0.0.1-SNAPSHOT.jar" will be created in the target folder. Open a CMD
   java -jar dti-0.0.1-SNAPSHOT.jar
 ```
 
-Or run the DtiApplication.java with VS Code / Eclipse IDE.
+The application will be live at http://localhost:8080.
 
-*Make SURE your MySQL database is running and configured.
+
+OR run the DtiApplication.java with VS Code / Eclipse IDE.
+
+*Make SURE your MySQL database is running and configured.*
 
 ## API Reference
 
