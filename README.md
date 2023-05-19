@@ -29,7 +29,16 @@ To deploy a .jar file for this this project run:
   ./mvnw clean package
 ```
 
-Or run the DtiApplication.java with VS Code / Eclipse IDE
+Then a "dti-0.0.1-SNAPSHOT.jar" will be created in the target folder. Open a CMD in that folder and run:
+
+```bash
+  java -jar dti-0.0.1-SNAPSHOT.jar
+```
+
+Or run the DtiApplication.java with VS Code / Eclipse IDE.
+
+*Make SURE your MySQL database is running and configured.
+
 ## API Reference
 
 #### Post and delete reminders
