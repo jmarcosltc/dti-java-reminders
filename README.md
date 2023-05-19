@@ -5,7 +5,7 @@ This is a simple reminder generator for a test at DTI. This repo consists of a J
 
 This project uses:
  - Java 17
-- Spring boot v3.1.0
+- Spring boot v3.0.6
 - MAVEN
 
 ## Environment Variables

@@ -15,5 +15,5 @@ public interface LembreteRepository extends CrudRepository<Lembrete, Integer> {
     void deletarPorNomeEData(@Param("nome") String nome, @Param("dataDoLembrete") String dataDoLembrete);
 
     @Query("SELECT i FROM Lembrete i ORDER BY SUBSTRING(i.dataDoLembrete, 4, 2) ASC, SUBSTRING(i.dataDoLembrete, 1, 2) ASC, SUBSTRING(i.dataDoLembrete, 7) ASC")
-    List<Lembrete> findAllSortedByDate();
+    List<Lembrete> pegarTodosPorDataLembretes();
 }

@@ -22,7 +22,7 @@ public class LembreteController {
 
     @GetMapping(path = "/lembrete")
     public @ResponseBody Iterable<Lembrete> getLembrete() {
-        return lembreteRepository.findAllSortedByDate();
+        return lembreteRepository.pegarTodosPorDataLembretes();
     }
 
     @PostMapping(path = "/lembrete")
