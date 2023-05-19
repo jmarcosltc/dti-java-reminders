@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"></html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lembretes DTI</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="titulo">Novo lembrete</h1>
+
+      <div id="lembreteForm">
+        <form>
+          <label for="nome">Nome</label>
+          <input
+            class="nomeDoLembrete"
+            id="nome"
+            type="text"
+            placeholder="Nome do lembrete"
+            required
+          />
+          <label for="nome">Data</label>
+          <input
+            type="date"
+            id="data"
+            pattern="\d{2}/\d{2}/\d{4}"
+            placeholder="dd/mm/yyyy"
+            maxlength="10"
+            class="dataDoLembrete"
+            required
+          />
+
+          <input type="submit" value="Criar" class="criarLembrete" onclick="" />
+        </form>
+      </div>
+
+      <h1 class="titulo">Lista de lembretes</h1>
+
+      <div id="lembretes" onload=""></div>
+    </div>
+
+    <style>
+      #lembreteForm {
+        display: block;
+        flex-direction: column;
+        margin: 0 auto;
+        width: 25%;
+      }
+
+      #lembreteForm input {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      #lembretes {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+      }
+
+      #lembreteTab {
+        display: block;
+        flex-direction: row;
+        justify-content: space-between;
+        border: 1px solid black;
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      .lembrete {
+        display: block;
+      }
+
+      .deletarLembrete {
+        background-color: red;
+        border-radius: 20px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .criarLembrete {
+        background-color: rgb(0, 44, 240);
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+        padding: 5px 15px;
+        float: inline-end;
+      }
+
+      .nomeDoLembrete {
+        padding: 5px 15px;
+        width: 100%;
+      }
+
+      .dataDoLembrete {
+        padding: 5px 15px;
+        margin: 0px;
+        width: 100%;
+      }
+
+      .titulo {
+        display: flex;
+        text-align: center;
+        justify-self: center;
+        align-items: center;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dataDoLembreteNaLista {
+        font-size: large;
+        font-weight: bold;
+      }
+    </style>
+
+    <script>
+      window.onload = function () {
+        fetch("http://localhost:8080/v1/lembrete", { method: "GET" })
+          .then((response) => {
+            if (!response) {
+              throw new Error("Não foi possível obter os lembretes.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const resultado = {};
+
+            data.forEach((obj) => {
+              const { dataDoLembrete, nome } = obj;
+
+              if (resultado[dataDoLembrete]) {
+                resultado[dataDoLembrete].push(nome);
+              } else {
+                resultado[dataDoLembrete] = [nome];
+              }
+            });
+
+            for (const data in resultado) {
+              const lembretes = resultado[data];
+              let div = document.getElementById(data);
+
+              if (!div) {
+                div = document.createElement("div");
+                div.id = "lembreteTab";
+                div.innerHTML = `<p class="dataDoLembreteNaLista">${data}</p>`;
+                document.getElementById("lembretes").appendChild(div);
+              }
+
+              for (let i = 0; i < lembretes.length; i++) {
+                const lembrete = lembretes[i];
+                console.log(data);
+                const lembreteElement = document.createElement("p");
+                lembreteElement.className = "lembrete";
+                lembreteElement.innerHTML = `${lembrete} <button class="deletarLembrete" onclick="deletarLembrete('${lembrete}', '${data}')"> X </button>`;
+                div.appendChild(lembreteElement);
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Erro:", error);
+          });
+      };
+
+      document.getElementById("lembreteForm").onsubmit = function (event) {
+        event.preventDefault();
+        const nome = document.getElementById("nome").value;
+        let dataDoLembrete = document.getElementById("data").value;
+
+        let dataSemTraco = dataDoLembrete.split("-");
+        let ano = dataSemTraco[0];
+        let mes = dataSemTraco[1];
+        let dia = dataSemTraco[2];
+
+        dataDoLembrete = dia + "/" + mes + "/" + ano;
+        console.log(dataDoLembrete);
+        const obj = {
+          nome: nome,
+          dataDoLembrete: dataDoLembrete,
+        };
+
+        fetch("http://localhost:8080/v1/lembrete", {
+          method: "POST",
+          body: JSON.stringify(obj),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then(function (response) {
+            console.log(response.data);
+            window.location.reload();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      };
+
+      const deletarLembrete = (nome, dataDoLembrete) => {
+        const obj = {
+          nome: nome,
+          dataDoLembrete: dataDoLembrete,
+        };
+
+        console.log(obj);
+        fetch(`http://localhost:8080/v1/lembrete`, {
+          body: JSON.stringify(obj),
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then(function (response) {
+            console.log(response.data);
+            window.location.reload();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      };
+
+      let hoje = new Date();
+      let dia = String(hoje.getDate()).padStart(2, "0");
+      let mes = String(hoje.getMonth() + 1).padStart(2, "0"); // January is 0
+      let ano = hoje.getFullYear();
+      let minDate = ano + "-" + mes + "-" + dia;
+
+      document.querySelector("#data").setAttribute("min", minDate);
+    </script>
+  </body>
+</html>
